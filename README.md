@@ -7,6 +7,22 @@ barato que mide la **calidad del agua** (sensor TDS) y la **calidad del aire**
 Este repo es la **caja de herramientas del grupo**: el firmware que se carga a cada
 nodo, las guías para armarlo y la propuesta de base de datos común.
 
+## 🔌 Diagramas de cableado
+
+| Diseño | Diagrama | Estado |
+|---|---|---|
+| **Original, 1 sensor** (A0 + jumper D7) — diseño de **Emily Acosta** | [`docs/armado/original-1sensor/`](docs/armado/original-1sensor/) (imagen abajo) | ✅ Probado en hardware · ⚠️ histórico: no sirve para más de un sensor a la vez |
+| **2 sensores a la vez** (ESP8266 + ADS1115) ⭐ recomendado | [`docs/armado/DIAGRAMA_ESP8266_2SENSORES.html`](docs/armado/DIAGRAMA_ESP8266_2SENSORES.html) + [guía](docs/armado/GUIA_ARMADO_2SENSORES.md) | 🧪 Falta probarlo en hardware |
+
+<details>
+<summary>Ver el diagrama original (1 sensor)</summary>
+
+![Diagrama original: un sensor a la vez en A0, jumper de modo en D7](docs/armado/original-1sensor/DIAGRAMA_ORIGINAL_1SENSOR.png)
+
+</details>
+
+Índice completo y cómo abrir los `.html`: [`docs/armado/LEEME.md`](docs/armado/LEEME.md).
+
 ---
 
 ## ¿Qué está armado y en qué estado?

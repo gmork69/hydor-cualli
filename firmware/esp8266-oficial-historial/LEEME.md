@@ -18,7 +18,11 @@ tablero por fin se llena para todos.
 - El **jumper de modo** en el pin **D7**:
   - **D7 conectado a G (GND)** → modo **AGUA** (TDS).
   - **D7 suelto (sin conectar)** → modo **AIRE** (MQ-135).
-- Alimentación: TDS a 3V3, MQ-135 a Vin/5V, ambos a GND.
+- Alimentación: **TDS y MQ-135 a 3V3**, ambos a GND (así viene en el diagrama original).
+  No conectes el MQ-135 a Vin/5V en este montaje: su salida iría **directo** al A0 del
+  NodeMCU, que solo acepta hasta 3.3V.
+
+Diagrama: [`docs/armado/original-1sensor`](../../docs/armado/original-1sensor/).
 
 > ⚠️ Mueve **juntos** el cable de datos y el jumper.
 

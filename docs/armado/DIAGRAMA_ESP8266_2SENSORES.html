@@ -138,6 +138,7 @@
     </div>
 
     <div class="nota">🧩 El <b>ESP</b> y el <b>ADS</b> van <b>a caballo sobre el canal central</b>: una fila de patitas arriba y la otra abajo. Así cada pata cae en su propia columna y <b>no hacen corto</b>.</div>
+    <div class="nota">⚠️ <b>Une los dos rieles de GND (–).</b> En casi todas las protoboards el riel de <b>arriba</b> y el de <b>abajo</b> <b>no están conectados</b> entre sí. El ESP y el ADS usan el de arriba; el MQ-135 y la R2 usan el de abajo. Pon <b>un cable negro</b> del riel – de arriba al riel – de abajo (en el dibujo, a la derecha). Sin ese cable el MQ-135 no comparte tierra con el ADS y la lectura de A1 sale loca.</div>
   </div>
 
   <!-- ====== ZOOM DEL DIVISOR ====== -->
@@ -225,6 +226,7 @@ void loop() {
     {pts:'165,234 300,234 300,180', c:'#1b1b1b', comp:'tds'},
     {pts:'165,440 250,440 250,497', c:'#1b1b1b', comp:'mq'},
     {pts:'546,468 546,497', c:'#1b1b1b', comp:'mq'},                 // R2 -> riel -
+    {pts:'880,180 880,497', c:'#1b1b1b', comp:'esp ads mq'},         // PUENTE: riel - de arriba <-> riel - de abajo (tierra común)
     {pts:'416,274 416,196 182,196 182,412 165,412', c:'#f39019', comp:'esp mq'},
     {pts:'460,274 460,238 704,238 704,274', c:'#2f6fe0', comp:'esp ads'},
     {pts:'504,274 504,222 736,222 736,274', c:'#f2c200', comp:'esp ads'},

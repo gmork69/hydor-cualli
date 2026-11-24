@@ -71,14 +71,17 @@ medio es el que va a **A1**.
 
 ---
 
-## ⚠️ 3 cosas que NO puedes saltarte
+## ⚠️ 4 cosas que NO puedes saltarte
 
 1. **El divisor es obligatorio.** El MQ-135 trabaja a 5V y su salida puede
    llegar casi a 5V. El ADS solo aguanta ~3.6V: **sin el divisor, lo quemas.**
    Las dos resistencias deben ser **iguales (10 kΩ)** para partir el voltaje justo a la mitad.
 2. **El MQ-135 necesita 5V** (su calentador interno). A 3.3V no calienta bien y
    las lecturas no sirven. Toma los 5V del pin **Vin/VUSB**.
-3. **Quema-inicial del MQ-135 (burn-in):** déjalo **encendido 24-48 h seguidas**
+3. **Todas las tierras (GND) juntas.** ESP, ADS, TDS, MQ-135 y la R2 deben
+   compartir la misma tierra. En la protoboard el riel – de **arriba** y el de
+   **abajo** casi nunca están unidos: si usas los dos, **pon un cable entre ellos**.
+4. **Quema-inicial del MQ-135 (burn-in):** déjalo **encendido 24-48 h seguidas**
    la primera vez, antes de confiar en sus lecturas. Es normal.
 
 ---

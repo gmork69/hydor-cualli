@@ -129,6 +129,7 @@
     </div>
 
     <div class="nota">🧩 El <b>ESP</b> y el <b>ADS</b> van a caballo sobre el <b>canal central</b> (no hacen corto). Las <b>2 resistencias</b> (R1 y R2) van en el banco de abajo, juntas en el <b>punto medio</b>. Los sensores (TDS y MQ) se conectan con cablecitos a los rieles y a las columnas. <b>Toca cada uno para ver claro su camino.</b></div>
+    <div class="nota">⚠️ <b>Une los dos rieles de GND (–)</b> con un cable negro (en el dibujo, a la derecha). En casi todas las protoboards el riel de arriba y el de abajo <b>no están conectados</b>. Sin ese puente, el MQ-135 y la R2 (abajo) no comparten tierra con el ESP y el ADS (arriba).</div>
   </div>
 </div>
 
@@ -147,6 +148,7 @@
     {pts:'110,140 132,140 132,88', c:'#1b1b1b', comp:'tds'},         // TDS GND -> riel -
     {pts:'110,330 138,330 138,352', c:'#1b1b1b', comp:'mq'},         // MQ GND -> riel - abajo
     {pts:'589,300 589,352', c:'#1b1b1b', comp:'mq'},                 // R2 -> riel - abajo
+    {pts:'900,88 900,352', c:'#1b1b1b', comp:'esp ads mq'},          // PUENTE: riel - de arriba <-> riel - de abajo (tierra común)
     // --- 5V (naranja) ---
     {pts:'110,300 128,300 128,104 313,104 313,198', c:'#f39019', comp:'esp mq'}, // MQ VCC -> Vin
     // --- I2C ---
