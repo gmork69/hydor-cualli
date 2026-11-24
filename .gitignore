@@ -17,5 +17,7 @@
 
 # Nunca subir secretos (por si alguien crea un archivo así)
 secrets.h
+secretos.h
+firebase-config.js
 *.env
 .env

@@ -1,0 +1,221 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydor-Cualli · Protoboard armado (dónde va cada cosa)</title>
+<style>
+  :root{ --bg:#fbfdff; --ink:#12333a; --muted:#5a7a80; --linea:#dfeaec; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.45}
+  .wrap{max-width:1040px;margin:0 auto;padding:20px 14px 60px}
+  h1{font-size:1.45rem;margin:0 0 2px;font-weight:800}
+  .sub{color:var(--muted);margin:0 0 12px}
+  .card{background:#fff;border:2px solid var(--linea);border-radius:16px;padding:12px}
+  #hint{font-weight:700;color:#0f8a86;margin:0 0 8px;font-size:1rem}
+  .nota{background:#fff7ed;border:2px solid #f39019;border-radius:12px;padding:10px 12px;margin-top:12px;font-size:.9rem;font-weight:600}
+  svg{width:100%;height:auto;display:block;touch-action:manipulation}
+  .wire-under{fill:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:opacity .18s}
+  .wire{fill:none;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:opacity .18s,stroke-width .18s}
+  .wire.hi{stroke-width:7.5}
+  .dim{opacity:.07}
+  .comp{cursor:pointer;transition:opacity .18s}
+  .comp.dim{opacity:.18}
+  .pinlab{font-size:9.5px;font-weight:800;fill:#ffffff}
+  .clabel{font-size:14px;font-weight:800;fill:#ffffff}
+  .tag{font-size:11px;font-weight:800;fill:#12333a}
+  .rsym{fill:none;stroke:#12333a;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px;align-items:center}
+  .legend .it{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem}
+  .sw{width:20px;height:8px;border-radius:5px;border:2px solid #12333a}
+</style>
+
+<div class="wrap">
+  <h1>🔌 Protoboard armado: ¿dónde va cada cosita?</h1>
+  <p class="sub">Todo puesto en su lugar. Se ve cargado (así son de verdad) — <b>toca cada componente para aislar sus cables.</b></p>
+
+  <div class="card">
+    <p id="hint">👆 Toca el ESP, el ADS, el TDS o el MQ para ver SOLO sus cables. Toca el fondo para ver todo.</p>
+    <svg viewBox="0 0 1000 600" role="img" aria-label="Protoboard armado">
+      <rect x="0" y="0" width="1000" height="600" fill="transparent" onclick="reset()"/>
+
+      <!-- ===== PROTOBOARD ===== -->
+      <rect x="150" y="55" width="770" height="330" rx="14" fill="#f3ead2" stroke="#d9c99a" stroke-width="3"/>
+      <!-- rieles -->
+      <line x1="165" y1="72" x2="905" y2="72" stroke="#e23b2e" stroke-width="4"/>
+      <line x1="165" y1="88" x2="905" y2="88" stroke="#2f6fe0" stroke-width="4"/>
+      <line x1="165" y1="352" x2="905" y2="352" stroke="#2f6fe0" stroke-width="4"/>
+      <line x1="165" y1="368" x2="905" y2="368" stroke="#e23b2e" stroke-width="4"/>
+      <text x="160" y="76" text-anchor="end" class="tag" fill="#e23b2e" font-size="12">+</text>
+      <text x="160" y="92" text-anchor="end" class="tag" fill="#2f6fe0" font-size="12">–</text>
+      <text x="160" y="356" text-anchor="end" class="tag" fill="#2f6fe0" font-size="12">–</text>
+      <text x="160" y="372" text-anchor="end" class="tag" fill="#e23b2e" font-size="12">+</text>
+      <g id="holes"></g>
+      <!-- canal central -->
+      <rect x="165" y="212" width="740" height="22" fill="#e6dab6" stroke="#d3c391" stroke-width="1"/>
+      <text x="535" y="227" text-anchor="middle" class="tag" font-size="10" fill="#9c8f63">◀ canal central ▶</text>
+
+      <!-- ===== CABLES ===== -->
+      <g id="wires"></g>
+
+      <!-- ===== SENSOR TDS (izquierda) ===== -->
+      <g class="comp" data-name="tds" onclick="pick('tds',event)">
+        <rect x="15" y="95" width="95" height="76" rx="10" fill="#1a91b4" stroke="#12333a" stroke-width="2.5"/>
+        <text x="62" y="122" text-anchor="middle" class="clabel" font-size="13">TDS</text>
+        <text x="62" y="140" text-anchor="middle" class="clabel" font-size="10">agua</text>
+        <circle cx="110" cy="120" r="5" fill="#e23b2e" stroke="#12333a"/><text x="98" y="124" text-anchor="end" class="tag" fill="#fff" font-size="9">VCC</text>
+        <circle cx="110" cy="140" r="5" fill="#1b1b1b" stroke="#12333a"/><text x="98" y="144" text-anchor="end" class="tag" fill="#fff" font-size="9">GND</text>
+        <circle cx="110" cy="160" r="5" fill="#33a852" stroke="#12333a"/><text x="98" y="164" text-anchor="end" class="tag" fill="#fff" font-size="9">A</text>
+      </g>
+
+      <!-- ===== SENSOR MQ-135 (izquierda abajo) ===== -->
+      <g class="comp" data-name="mq" onclick="pick('mq',event)">
+        <rect x="15" y="280" width="95" height="88" rx="10" fill="#4c9a52" stroke="#12333a" stroke-width="2.5"/>
+        <circle cx="52" cy="335" r="17" fill="#3a7d40" stroke="#12333a" stroke-width="2"/>
+        <text x="62" y="300" text-anchor="middle" class="clabel" font-size="12">MQ-135</text>
+        <circle cx="110" cy="300" r="5" fill="#f39019" stroke="#12333a"/><text x="98" y="304" text-anchor="end" class="tag" fill="#fff" font-size="9">VCC</text>
+        <circle cx="110" cy="330" r="5" fill="#1b1b1b" stroke="#12333a"/><text x="98" y="334" text-anchor="end" class="tag" fill="#fff" font-size="9">GND</text>
+        <circle cx="110" cy="360" r="5" fill="#33a852" stroke="#12333a"/><text x="98" y="364" text-anchor="end" class="tag" fill="#fff" font-size="9">AO</text>
+      </g>
+
+      <!-- ===== ESP8266 (cruza el canal) ===== -->
+      <g class="comp" data-name="esp" onclick="pick('esp',event)">
+        <rect class="body" x="199" y="190" width="274" height="62" rx="10" fill="#2f7d84" stroke="#12333a" stroke-width="2.5"/>
+        <text x="336" y="216" text-anchor="middle" class="clabel">ESP8266</text>
+        <text x="336" y="232" text-anchor="middle" class="clabel" font-size="10">NodeMCU</text>
+        <circle cx="221" cy="198" r="5.5" fill="#e23b2e" stroke="#12333a"/><text x="221" y="186" text-anchor="middle" class="tag" font-size="9">3V3</text>
+        <circle cx="267" cy="198" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="267" y="186" text-anchor="middle" class="tag" font-size="9">GND</text>
+        <circle cx="313" cy="198" r="5.5" fill="#f39019" stroke="#12333a"/><text x="313" y="186" text-anchor="middle" class="tag" font-size="9">Vin</text>
+        <circle cx="405" cy="246" r="5.5" fill="#2f6fe0" stroke="#12333a"/><text x="405" y="266" text-anchor="middle" class="tag" font-size="9">D2</text>
+        <circle cx="451" cy="246" r="5.5" fill="#f2c200" stroke="#12333a"/><text x="451" y="266" text-anchor="middle" class="tag" font-size="9">D1</text>
+      </g>
+
+      <!-- ===== ADS1115 (cruza el canal) ===== -->
+      <g class="comp" data-name="ads" onclick="pick('ads',event)">
+        <rect class="body" x="613" y="190" width="228" height="62" rx="10" fill="#7b5ea7" stroke="#12333a" stroke-width="2.5"/>
+        <text x="727" y="224" text-anchor="middle" class="clabel">ADS1115</text>
+        <circle cx="635" cy="198" r="5.5" fill="#e23b2e" stroke="#12333a"/><text x="635" y="186" text-anchor="middle" class="tag" font-size="9">VDD</text>
+        <circle cx="681" cy="198" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="681" y="186" text-anchor="middle" class="tag" font-size="9">GND</text>
+        <circle cx="727" cy="198" r="5.5" fill="#2f6fe0" stroke="#12333a"/><text x="727" y="186" text-anchor="middle" class="tag" font-size="9">SDA</text>
+        <circle cx="773" cy="198" r="5.5" fill="#f2c200" stroke="#12333a"/><text x="773" y="186" text-anchor="middle" class="tag" font-size="9">SCL</text>
+        <circle cx="819" cy="198" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="819" y="186" text-anchor="middle" class="tag" font-size="9">ADDR</text>
+        <circle cx="635" cy="246" r="5.5" fill="#33a852" stroke="#12333a"/><text x="635" y="266" text-anchor="middle" class="tag" font-size="9">A0</text>
+        <circle cx="681" cy="246" r="5.5" fill="#33a852" stroke="#12333a"/><text x="681" y="266" text-anchor="middle" class="tag" font-size="9">A1</text>
+      </g>
+
+      <!-- ===== Divisor (2 resistencias en el banco de abajo) ===== -->
+      <g class="comp" data-name="mq" onclick="pick('mq',event)">
+        <polyline class="rsym" points="497,300 505,292 519,308 533,292 543,300"/>
+        <text x="520" y="286" text-anchor="middle" class="tag" font-size="9">R1 10k</text>
+        <circle cx="543" cy="300" r="4" fill="#12333a"/>
+        <text x="543" y="326" text-anchor="middle" class="tag" font-size="9" fill="#7b3fa0">medio</text>
+        <polyline class="rsym" points="543,300 551,292 565,308 579,292 589,300"/>
+        <text x="566" y="286" text-anchor="middle" class="tag" font-size="9">R2 10k</text>
+      </g>
+
+      <!-- USB -->
+      <g>
+        <rect x="303" y="256" width="66" height="20" rx="6" fill="#12333a"/>
+        <text x="336" y="270" text-anchor="middle" class="clabel" font-size="11">⚡USB</text>
+        <polygon points="328,256 344,256 336,247" fill="#12333a"/>
+      </g>
+    </svg>
+
+    <div class="legend">
+      <div class="it"><span class="sw" style="background:#e23b2e"></span>3.3V (+)</div>
+      <div class="it"><span class="sw" style="background:#f39019"></span>5V</div>
+      <div class="it"><span class="sw" style="background:#1b1b1b"></span>GND (–)</div>
+      <div class="it"><span class="sw" style="background:#2f6fe0"></span>SDA</div>
+      <div class="it"><span class="sw" style="background:#f2c200"></span>SCL</div>
+      <div class="it"><span class="sw" style="background:#33a852"></span>Señal</div>
+    </div>
+
+    <div class="nota">🧩 El <b>ESP</b> y el <b>ADS</b> van a caballo sobre el <b>canal central</b> (no hacen corto). Las <b>2 resistencias</b> (R1 y R2) van en el banco de abajo, juntas en el <b>punto medio</b>. Los sensores (TDS y MQ) se conectan con cablecitos a los rieles y a las columnas. <b>Toca cada uno para ver claro su camino.</b></div>
+  </div>
+</div>
+
+<script>
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const WIRES = [
+    // --- 3.3V (rojo) ---
+    {pts:'221,198 221,72', c:'#e23b2e', comp:'esp'},                 // ESP 3V3 -> riel + (por su columna)
+    {pts:'635,198 635,72', c:'#e23b2e', comp:'ads'},                 // ADS VDD -> riel +
+    {pts:'110,120 145,120 145,72', c:'#e23b2e', comp:'tds'},         // TDS VCC -> riel +
+    // --- GND (negro) ---
+    {pts:'267,198 267,88', c:'#1b1b1b', comp:'esp'},                 // ESP GND -> riel -
+    {pts:'681,198 681,88', c:'#1b1b1b', comp:'ads'},                 // ADS GND -> riel -
+    {pts:'819,198 819,88', c:'#1b1b1b', comp:'ads'},                 // ADS ADDR -> riel -
+    {pts:'110,140 132,140 132,88', c:'#1b1b1b', comp:'tds'},         // TDS GND -> riel -
+    {pts:'110,330 138,330 138,352', c:'#1b1b1b', comp:'mq'},         // MQ GND -> riel - abajo
+    {pts:'589,300 589,352', c:'#1b1b1b', comp:'mq'},                 // R2 -> riel - abajo
+    // --- 5V (naranja) ---
+    {pts:'110,300 128,300 128,104 313,104 313,198', c:'#f39019', comp:'esp mq'}, // MQ VCC -> Vin
+    // --- I2C ---
+    {pts:'405,246 405,278 727,278 727,198', c:'#2f6fe0', comp:'esp ads'}, // D2 -> SDA
+    {pts:'451,246 451,292 773,292 773,198', c:'#f2c200', comp:'esp ads'}, // D1 -> SCL
+    // --- señales verdes ---
+    {pts:'110,160 138,160 138,338 635,338 635,246', c:'#33a852', comp:'tds ads'}, // TDS A -> A0
+    {pts:'110,360 497,360 497,300', c:'#33a852', comp:'mq'},              // MQ AO -> R1
+    {pts:'543,300 543,268 681,268 681,246', c:'#33a852', comp:'mq ads'}   // medio -> A1
+  ];
+
+  (function holes(){
+    const g = document.getElementById('holes');
+    const rows = [118,138,158,178,198, 246,266,286,306,326];
+    rows.forEach(y=>{
+      for(let x=175; x<=865; x+=46){
+        const c = document.createElementNS(NS,'circle');
+        c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',3);
+        c.setAttribute('fill','#cbbf95'); c.setAttribute('pointer-events','none');
+        g.appendChild(c);
+      }
+    });
+    // hoyos de los rieles
+    [72,88,352,368].forEach(y=>{
+      for(let x=175; x<=865; x+=46){
+        const c = document.createElementNS(NS,'circle');
+        c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',2.4);
+        c.setAttribute('fill', y<200 ? (y===72?'#eab6b1':'#b7c9ef') : (y===368?'#eab6b1':'#b7c9ef'));
+        c.setAttribute('pointer-events','none');
+        g.appendChild(c);
+      }
+    });
+  })();
+
+  (function drawWires(){
+    const g = document.getElementById('wires');
+    WIRES.forEach(w=>{
+      const u = document.createElementNS(NS,'polyline');
+      u.setAttribute('points', w.pts);
+      u.setAttribute('class','wire-under');
+      u.setAttribute('stroke', w.c==='#1b1b1b' ? '#000' : '#0e2b34');
+      u.dataset.comp = w.comp;
+      g.appendChild(u);
+      const l = document.createElementNS(NS,'polyline');
+      l.setAttribute('points', w.pts);
+      l.setAttribute('class','wire');
+      l.setAttribute('stroke', w.c);
+      l.dataset.comp = w.comp;
+      g.appendChild(l);
+    });
+  })();
+
+  const NOMBRE = {esp:'ESP8266', ads:'ADS1115', tds:'sensor de agua (TDS)', mq:'sensor de aire (MQ-135)'};
+
+  function pick(name, ev){
+    if(ev) ev.stopPropagation();
+    document.querySelectorAll('.wire, .wire-under').forEach(w=>{
+      const on = w.dataset.comp.split(' ').includes(name);
+      w.classList.toggle('dim', !on);
+      if(w.classList.contains('wire')) w.classList.toggle('hi', on);
+    });
+    document.querySelectorAll('.comp').forEach(c=>{
+      c.classList.toggle('dim', c.dataset.name !== name);
+    });
+    document.getElementById('hint').textContent = '🔎 Cables del ' + NOMBRE[name] + '. Toca el fondo para ver todo.';
+  }
+
+  function reset(){
+    document.querySelectorAll('.wire, .wire-under, .comp').forEach(e=>e.classList.remove('dim','hi'));
+    document.getElementById('hint').textContent = '👆 Toca el ESP, el ADS, el TDS o el MQ para ver SOLO sus cables. Toca el fondo para ver todo.';
+  }
+</script>
