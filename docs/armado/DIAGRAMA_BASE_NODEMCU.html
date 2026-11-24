@@ -1,0 +1,190 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydor-Cualli · Nodo sobre la base NodeMCU (HW-389)</title>
+<style>
+  :root{ --bg:#fbfdff; --ink:#12333a; --muted:#5a7a80; --linea:#dfeaec; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.45}
+  .wrap{max-width:1040px;margin:0 auto;padding:20px 14px 60px}
+  h1{font-size:1.4rem;margin:0 0 2px;font-weight:800}
+  .sub{color:var(--muted);margin:0 0 12px}
+  .card{background:#fff;border:2px solid var(--linea);border-radius:16px;padding:12px}
+  #hint{font-weight:700;color:#0f8a86;margin:0 0 8px;font-size:1rem}
+  .nota{background:#fff7ed;border:2px solid #f39019;border-radius:12px;padding:10px 12px;margin-top:12px;font-size:.9rem;font-weight:600}
+  svg{width:100%;height:auto;display:block;touch-action:manipulation}
+  .wire-under{fill:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:opacity .18s}
+  .wire{fill:none;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:opacity .18s,stroke-width .18s}
+  .wire.hi{stroke-width:7.5}
+  .dim{opacity:.08}
+  .comp{cursor:pointer;transition:opacity .18s}
+  .comp.dim{opacity:.2}
+  .clabel{font-size:13px;font-weight:800;fill:#fff}
+  .tag{font-size:11px;font-weight:800;fill:#12333a}
+  .rsym{fill:none;stroke:#12333a;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px}
+  .legend .it{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem}
+  .sw{width:20px;height:8px;border-radius:5px;border:2px solid #12333a}
+</style>
+
+<div class="wrap">
+  <h1>🔌 Nodo Hidro-Cuali sobre la base NodeMCU (HW-389)</h1>
+  <p class="sub">El ESP8266 se encaja en la base; los sensores se cuelgan de los pines. <b>Toca un componente para ver sus cables.</b></p>
+
+  <div class="card">
+    <p id="hint">👆 Toca el ADS, el TDS o el MQ para aislar su camino. Toca el fondo para ver todo.</p>
+    <svg viewBox="0 0 1000 600" role="img" aria-label="Diagrama base NodeMCU">
+      <rect x="0" y="0" width="1000" height="600" fill="transparent" onclick="reset()"/>
+
+      <!-- ===== BASE HW-389 ===== -->
+      <rect x="250" y="95" width="500" height="300" rx="14" fill="#1d2530" stroke="#0c1116" stroke-width="3"/>
+      <text x="742" y="112" text-anchor="end" fill="#8fa6b0" font-size="11" font-weight="800">Base HW-389</text>
+      <g id="strip"></g>
+      <!-- NodeMCU encajado -->
+      <rect x="330" y="180" width="340" height="150" rx="10" fill="#2f7d84" stroke="#0c1116" stroke-width="2"/>
+      <path d="M360,215 l0,40 l14,0 l0,-25 l14,25 l0,-40" fill="none" stroke="#bfe3e2" stroke-width="4"/>
+      <text x="500" y="252" text-anchor="middle" class="clabel">ESP8266 NodeMCU</text>
+      <text x="500" y="270" text-anchor="middle" class="clabel" font-size="10">(se encaja aquí)</text>
+      <!-- DC jack -->
+      <rect x="690" y="338" width="48" height="34" rx="5" fill="#0c1116" stroke="#3a4652" stroke-width="2"/>
+      <text x="714" y="388" text-anchor="middle" class="tag" font-size="10" fill="#5a7a80">DC jack</text>
+      <!-- VUSB / GND abajo-izquierda -->
+      <circle cx="285" cy="360" r="6" fill="#f39019" stroke="#0c1116"/><text x="285" y="382" text-anchor="middle" class="tag" font-size="10" fill="#c9840f">VUSB 5V</text>
+      <circle cx="345" cy="360" r="6" fill="#1b1b1b" stroke="#3a4652"/><text x="345" y="382" text-anchor="middle" class="tag" font-size="10" fill="#5a7a80">GND</text>
+
+      <!-- ===== CABLES ===== -->
+      <g id="wires"></g>
+
+      <!-- ===== ADS1115 ===== -->
+      <g class="comp" data-name="ads" onclick="pick('ads',event)">
+        <rect class="body" x="810" y="150" width="150" height="162" rx="10" fill="#7b5ea7" stroke="#12333a" stroke-width="2.5"/>
+        <text x="905" y="140" text-anchor="middle" class="tag" font-size="12">ADS1115</text>
+        <circle cx="810" cy="170" r="5.5" fill="#e23b2e" stroke="#12333a"/><text x="822" y="174" class="tag" fill="#fff" font-size="10">VDD</text>
+        <circle cx="810" cy="192" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="822" y="196" class="tag" fill="#fff" font-size="10">GND</text>
+        <circle cx="810" cy="214" r="5.5" fill="#2f6fe0" stroke="#12333a"/><text x="822" y="218" class="tag" fill="#fff" font-size="10">SDA</text>
+        <circle cx="810" cy="236" r="5.5" fill="#f2c200" stroke="#12333a"/><text x="822" y="240" class="tag" fill="#fff" font-size="10">SCL</text>
+        <circle cx="810" cy="258" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="822" y="262" class="tag" fill="#fff" font-size="10">ADDR</text>
+        <circle cx="810" cy="282" r="5.5" fill="#33a852" stroke="#12333a"/><text x="822" y="286" class="tag" fill="#fff" font-size="10">A0</text>
+        <circle cx="810" cy="300" r="5.5" fill="#33a852" stroke="#12333a"/><text x="822" y="304" class="tag" fill="#fff" font-size="10">A1</text>
+      </g>
+
+      <!-- ===== TDS ===== -->
+      <g class="comp" data-name="tds" onclick="pick('tds',event)">
+        <rect class="body" x="40" y="95" width="120" height="92" rx="10" fill="#1a91b4" stroke="#12333a" stroke-width="2.5"/>
+        <text x="100" y="122" text-anchor="middle" class="clabel" font-size="13">TDS</text>
+        <text x="100" y="140" text-anchor="middle" class="clabel" font-size="10">agua</text>
+        <circle cx="160" cy="115" r="5.5" fill="#e23b2e" stroke="#12333a"/><text x="148" y="119" text-anchor="end" class="tag" fill="#fff" font-size="9">VCC</text>
+        <circle cx="160" cy="140" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="148" y="144" text-anchor="end" class="tag" fill="#fff" font-size="9">GND</text>
+        <circle cx="160" cy="165" r="5.5" fill="#33a852" stroke="#12333a"/><text x="148" y="169" text-anchor="end" class="tag" fill="#fff" font-size="9">A</text>
+      </g>
+
+      <!-- ===== MQ-135 ===== -->
+      <g class="comp" data-name="mq" onclick="pick('mq',event)">
+        <rect class="body" x="40" y="390" width="120" height="100" rx="10" fill="#4c9a52" stroke="#12333a" stroke-width="2.5"/>
+        <circle cx="82" cy="445" r="18" fill="#3a7d40" stroke="#12333a" stroke-width="2"/>
+        <text x="100" y="412" text-anchor="middle" class="clabel" font-size="12">MQ-135</text>
+        <circle cx="160" cy="410" r="5.5" fill="#f39019" stroke="#12333a"/><text x="148" y="414" text-anchor="end" class="tag" fill="#fff" font-size="9">VCC</text>
+        <circle cx="160" cy="438" r="5.5" fill="#1b1b1b" stroke="#12333a"/><text x="148" y="442" text-anchor="end" class="tag" fill="#fff" font-size="9">GND</text>
+        <circle cx="160" cy="466" r="5.5" fill="#33a852" stroke="#12333a"/><text x="148" y="470" text-anchor="end" class="tag" fill="#fff" font-size="9">AO</text>
+      </g>
+
+      <!-- ===== DIVISOR (caja aparte) ===== -->
+      <g class="comp" data-name="mq" onclick="pick('mq',event)">
+        <rect x="300" y="442" width="132" height="48" rx="8" fill="#fbeecb" stroke="#c9a227" stroke-width="2"/>
+        <text x="366" y="437" text-anchor="middle" class="tag" font-size="10" fill="#8a5a1a">DIVISOR (R1+R2 · 10k)</text>
+        <polyline class="rsym" points="308,466 315,459 327,473 339,459 348,466"/>
+        <circle cx="366" cy="466" r="3.5" fill="#12333a"/>
+        <polyline class="rsym" points="384,466 391,459 403,473 415,459 424,466"/>
+        <text x="366" y="483" text-anchor="middle" class="tag" font-size="8" fill="#7b3fa0">medio→A1</text>
+      </g>
+
+      <defs></defs>
+    </svg>
+
+    <div class="legend">
+      <div class="it"><span class="sw" style="background:#e23b2e"></span>3.3V</div>
+      <div class="it"><span class="sw" style="background:#f39019"></span>5V (VUSB)</div>
+      <div class="it"><span class="sw" style="background:#1b1b1b"></span>GND</div>
+      <div class="it"><span class="sw" style="background:#2f6fe0"></span>SDA</div>
+      <div class="it"><span class="sw" style="background:#f2c200"></span>SCL</div>
+      <div class="it"><span class="sw" style="background:#33a852"></span>Señal</div>
+    </div>
+
+    <div class="nota">🔑 <b>Dos cosas propias de esta base:</b><br>
+    1) <b>El divisor (R1+R2) NO cabe en la base</b> (no tiene protoboard). Va <b>soldado al MQ-135</b> o en un <b>mini-protoboard aparte</b>; su salida entra a <b>A1 del ADS</b>.<br>
+    2) <b>El MQ-135 necesita 5V:</b> tómalos del pin <b>VUSB</b> (5V cuando alimentas por USB). Si usas el <b>jack DC</b>, usa un adaptador de <b>5V</b> y <b>mide con multímetro</b> antes de conectar el MQ — un adaptador de 9-12V lo quema.</div>
+  </div>
+</div>
+
+<script>
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Tira de pines de la base (arriba)
+  const STRIP = ['GND','3V','D0','D1','D2','D3','D4','3V','GND','D5','D6','D7','D8','RX','TX','GND','3V'];
+  const USADOS = {3:1,4:1,1:1,0:1,16:1,15:1}; // D1,D2,3V,GND resaltados
+  const stripX = i => 280 + i*27.5;
+
+  (function drawStrip(){
+    const g = document.getElementById('strip');
+    STRIP.forEach((lab,i)=>{
+      const x = stripX(i);
+      const r = document.createElementNS(NS,'rect');
+      r.setAttribute('x',x-4); r.setAttribute('y',118); r.setAttribute('width',8); r.setAttribute('height',16);
+      r.setAttribute('rx',2); r.setAttribute('fill', USADOS[i]?'#ffd36b':'#556');
+      g.appendChild(r);
+      const t = document.createElementNS(NS,'text');
+      t.setAttribute('x',x); t.setAttribute('y',112); t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','8.5'); t.setAttribute('font-weight','800');
+      t.setAttribute('fill', USADOS[i]?'#ffd36b':'#8fa6b0'); t.textContent=lab;
+      g.appendChild(t);
+    });
+  })();
+
+  const WIRES = [
+    // ADS -> base (I2C + poder)
+    {pts:'810,214 762,214 762,72 390,72 390,134', c:'#2f6fe0', comp:'esp ads'}, // SDA -> D2
+    {pts:'810,236 748,236 748,62 362,62 362,134', c:'#f2c200', comp:'esp ads'}, // SCL -> D1
+    {pts:'810,170 780,170 780,88 720,88 720,134', c:'#e23b2e', comp:'ads'},      // VDD -> 3V
+    {pts:'810,192 766,192 766,100 692,100 692,134', c:'#1b1b1b', comp:'ads'},    // GND -> GND
+    {pts:'810,258 740,258 740,110 692,110 692,134', c:'#1b1b1b', comp:'ads'},    // ADDR -> GND
+    // TDS
+    {pts:'160,115 307,115 307,134', c:'#e23b2e', comp:'tds'},                    // VCC -> 3V
+    {pts:'160,140 280,140 280,134', c:'#1b1b1b', comp:'tds'},                    // GND -> GND
+    {pts:'160,165 186,165 186,548 770,548 770,282 810,282', c:'#33a852', comp:'tds ads'}, // A -> A0
+    // MQ
+    {pts:'160,410 232,410 232,360 285,360', c:'#f39019', comp:'esp mq'},         // VCC -> VUSB(5V)
+    {pts:'160,438 300,438 300,360 345,360', c:'#1b1b1b', comp:'mq'},             // GND -> GND
+    {pts:'160,466 300,466', c:'#33a852', comp:'mq'},                             // AO -> divisor
+    {pts:'424,466 432,466 432,522 792,522 792,300 810,300', c:'#33a852', comp:'mq ads'}, // divisor -> A1
+    {pts:'366,466 366,505 345,505 345,366', c:'#1b1b1b', comp:'mq'}              // divisor -> GND
+  ];
+
+  (function drawWires(){
+    const g = document.getElementById('wires');
+    WIRES.forEach(w=>{
+      const u = document.createElementNS(NS,'polyline');
+      u.setAttribute('points', w.pts); u.setAttribute('class','wire-under');
+      u.setAttribute('stroke', w.c==='#1b1b1b' ? '#000' : '#0e2b34');
+      u.dataset.comp = w.comp; g.appendChild(u);
+      const l = document.createElementNS(NS,'polyline');
+      l.setAttribute('points', w.pts); l.setAttribute('class','wire');
+      l.setAttribute('stroke', w.c); l.dataset.comp = w.comp; g.appendChild(l);
+    });
+  })();
+
+  const NOMBRE = {ads:'ADS1115', tds:'sensor de agua (TDS)', mq:'sensor de aire (MQ-135)'};
+  function pick(name, ev){
+    if(ev) ev.stopPropagation();
+    document.querySelectorAll('.wire, .wire-under').forEach(w=>{
+      const on = w.dataset.comp.split(' ').includes(name);
+      w.classList.toggle('dim', !on);
+      if(w.classList.contains('wire')) w.classList.toggle('hi', on);
+    });
+    document.querySelectorAll('.comp').forEach(c=>c.classList.toggle('dim', c.dataset.name!==name));
+    document.getElementById('hint').textContent = '🔎 Cables del ' + NOMBRE[name] + '. Toca el fondo para ver todo.';
+  }
+  function reset(){
+    document.querySelectorAll('.wire, .wire-under, .comp').forEach(e=>e.classList.remove('dim','hi'));
+    document.getElementById('hint').textContent = '👆 Toca el ADS, el TDS o el MQ para aislar su camino. Toca el fondo para ver todo.';
+  }
+</script>

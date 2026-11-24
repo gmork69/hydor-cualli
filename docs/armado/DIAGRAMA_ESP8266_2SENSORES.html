@@ -1,0 +1,288 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydor-Cualli · 2 sensores en el ESP8266 (protoboard)</title>
+<style>
+  :root{ --bg:#fbfdff; --panel:#ffffff; --ink:#12333a; --muted:#5a7a80; --linea:#dfeaec; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.45}
+  .wrap{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:1.5rem;margin:0 0 2px;font-weight:800}
+  .sub{color:var(--muted);margin:0 0 14px}
+  .card{background:var(--panel);border:2px solid var(--linea);border-radius:16px;padding:12px;margin-bottom:16px}
+  #hint{font-weight:700;color:#0f8a86;margin:0 0 8px;font-size:1rem}
+  .nota{background:#fff7ed;border:2px solid #f39019;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:.9rem;font-weight:600}
+  .nota+.nota{margin-top:8px}
+  svg{width:100%;height:auto;display:block;touch-action:manipulation}
+  .wire-under{fill:none;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:opacity .18s}
+  .wire{fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:opacity .18s,stroke-width .18s}
+  .wire.hi{stroke-width:8}
+  .dim{opacity:.08}
+  .comp{cursor:pointer;transition:opacity .18s}
+  .comp.dim{opacity:.20}
+  .comp:hover .body{filter:brightness(1.04)}
+  .plabel{font-size:12px;font-weight:800;fill:#12333a}
+  .pinlab{font-size:10px;font-weight:800;fill:#ffffff}
+  .clabel{font-size:15px;font-weight:800;fill:#ffffff}
+  .pin{stroke:#12333a;stroke-width:1.5}
+  .rsym{fill:none;stroke:#12333a;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:6px;align-items:center}
+  .legend .it{display:flex;align-items:center;gap:7px;font-weight:700;font-size:.9rem}
+  .sw{width:22px;height:8px;border-radius:5px;border:2px solid #12333a}
+  pre{background:#0e2b34;color:#e7f6f4;border-radius:12px;padding:14px;overflow:auto;font-size:.86rem;line-height:1.5}
+  pre .c{color:#7fd6cf}
+  h2{font-size:1.05rem;margin:0 0 8px}
+</style>
+
+<div class="wrap">
+  <h1>💧🌬️ Arma tu nodo: 2 sensores en el ESP8266</h1>
+  <p class="sub">TDS (agua) + MQ-135 (aire) al mismo tiempo, con el ADS1115. Vista de protoboard.</p>
+
+  <div class="card">
+    <p id="hint">👆 Toca un componente para seguir SOLO sus cables. Toca el fondo para ver todo.</p>
+    <svg viewBox="0 0 900 620" role="img" aria-label="Diagrama de protoboard">
+      <rect x="0" y="0" width="900" height="620" fill="transparent" onclick="reset()"/>
+
+      <!-- ===== PROTOBOARD ===== -->
+      <rect x="200" y="145" width="690" height="370" rx="14" fill="#f3ead2" stroke="#d9c99a" stroke-width="3"/>
+      <line x1="215" y1="165" x2="885" y2="165" stroke="#e23b2e" stroke-width="4"/>
+      <text x="206" y="170" text-anchor="end" class="plabel" fill="#e23b2e">+</text>
+      <line x1="215" y1="180" x2="885" y2="180" stroke="#2f6fe0" stroke-width="4"/>
+      <text x="206" y="185" text-anchor="end" class="plabel" fill="#2f6fe0">–</text>
+      <line x1="215" y1="482" x2="885" y2="482" stroke="#e23b2e" stroke-width="4"/>
+      <text x="206" y="487" text-anchor="end" class="plabel" fill="#e23b2e">+</text>
+      <line x1="215" y1="497" x2="885" y2="497" stroke="#2f6fe0" stroke-width="4"/>
+      <text x="206" y="502" text-anchor="end" class="plabel" fill="#2f6fe0">–</text>
+      <g id="holes"></g>
+
+      <rect x="215" y="298" width="670" height="34" fill="#e6dab6" stroke="#d3c391" stroke-width="1"/>
+      <text x="300" y="319" class="plabel" font-size="11" fill="#9c8f63">◀ CANAL CENTRAL (separa arriba y abajo) ▶</text>
+
+      <g id="wires"></g>
+
+      <!-- USB -->
+      <g>
+        <rect x="384" y="368" width="66" height="22" rx="6" fill="#12333a"/>
+        <text x="417" y="383" text-anchor="middle" class="clabel" font-size="12">⚡USB</text>
+        <polygon points="409,368 425,368 417,358" fill="#12333a"/>
+        <text x="458" y="383" class="plabel" font-size="11" fill="#5a7a80">entra la corriente</text>
+      </g>
+
+      <!-- ESP8266 -->
+      <g class="comp" data-name="esp" onclick="pick('esp',event)">
+        <rect class="body" x="300" y="274" width="235" height="86" rx="10" fill="#2f7d84" stroke="#12333a" stroke-width="2.5"/>
+        <text x="417" y="310" text-anchor="middle" class="clabel">ESP8266</text>
+        <text x="417" y="328" text-anchor="middle" class="clabel" font-size="11">NodeMCU</text>
+        <circle class="pin" cx="328" cy="274" r="6" fill="#e23b2e"/><text x="328" y="292" text-anchor="middle" class="pinlab">3V3</text>
+        <circle class="pin" cx="372" cy="274" r="6" fill="#1b1b1b"/><text x="372" y="292" text-anchor="middle" class="pinlab">GND</text>
+        <circle class="pin" cx="416" cy="274" r="6" fill="#f39019"/><text x="416" y="292" text-anchor="middle" class="pinlab">Vin</text>
+        <circle class="pin" cx="460" cy="274" r="6" fill="#2f6fe0"/><text x="460" y="292" text-anchor="middle" class="pinlab">D2</text>
+        <circle class="pin" cx="504" cy="274" r="6" fill="#f2c200"/><text x="504" y="292" text-anchor="middle" class="pinlab">D1</text>
+        <circle cx="328" cy="360" r="5" fill="#b9d3d3"/><circle cx="372" cy="360" r="5" fill="#b9d3d3"/>
+        <circle cx="416" cy="360" r="5" fill="#b9d3d3"/><circle cx="460" cy="360" r="5" fill="#b9d3d3"/>
+        <circle cx="504" cy="360" r="5" fill="#b9d3d3"/>
+      </g>
+
+      <!-- ADS1115 -->
+      <g class="comp" data-name="ads" onclick="pick('ads',event)">
+        <rect class="body" x="615" y="274" width="205" height="86" rx="10" fill="#7b5ea7" stroke="#12333a" stroke-width="2.5"/>
+        <text x="717" y="320" text-anchor="middle" class="clabel">ADS1115</text>
+        <circle class="pin" cx="640" cy="274" r="6" fill="#e23b2e"/><text x="640" y="292" text-anchor="middle" class="pinlab">VDD</text>
+        <circle class="pin" cx="672" cy="274" r="6" fill="#1b1b1b"/><text x="672" y="292" text-anchor="middle" class="pinlab">GND</text>
+        <circle class="pin" cx="704" cy="274" r="6" fill="#2f6fe0"/><text x="704" y="292" text-anchor="middle" class="pinlab">SDA</text>
+        <circle class="pin" cx="736" cy="274" r="6" fill="#f2c200"/><text x="736" y="292" text-anchor="middle" class="pinlab">SCL</text>
+        <circle class="pin" cx="768" cy="274" r="6" fill="#1b1b1b"/><text x="768" y="292" text-anchor="middle" class="pinlab">ADDR</text>
+        <circle class="pin" cx="665" cy="360" r="6" fill="#33a852"/><text x="665" y="350" text-anchor="middle" class="pinlab">A0</text>
+        <circle class="pin" cx="705" cy="360" r="6" fill="#33a852"/><text x="705" y="350" text-anchor="middle" class="pinlab">A1</text>
+      </g>
+
+      <!-- SENSOR TDS -->
+      <g class="comp" data-name="tds" onclick="pick('tds',event)">
+        <rect class="body" x="60" y="190" width="105" height="88" rx="10" fill="#1a91b4" stroke="#12333a" stroke-width="2.5"/>
+        <text x="112" y="216" text-anchor="middle" class="clabel" font-size="14">TDS</text>
+        <text x="112" y="234" text-anchor="middle" class="clabel" font-size="10">agua</text>
+        <circle class="pin" cx="165" cy="206" r="6" fill="#e23b2e"/><text x="153" y="210" text-anchor="end" class="plabel" fill="#fff">VCC</text>
+        <circle class="pin" cx="165" cy="234" r="6" fill="#1b1b1b"/><text x="153" y="238" text-anchor="end" class="plabel" fill="#fff">GND</text>
+        <circle class="pin" cx="165" cy="262" r="6" fill="#33a852"/><text x="153" y="266" text-anchor="end" class="plabel" fill="#fff">A</text>
+      </g>
+
+      <!-- SENSOR MQ-135 -->
+      <g class="comp" data-name="mq" onclick="pick('mq',event)">
+        <rect class="body" x="60" y="395" width="105" height="98" rx="10" fill="#4c9a52" stroke="#12333a" stroke-width="2.5"/>
+        <circle cx="102" cy="450" r="20" fill="#3a7d40" stroke="#12333a" stroke-width="2"/>
+        <text x="112" y="414" text-anchor="middle" class="clabel" font-size="13">MQ-135</text>
+        <circle class="pin" cx="165" cy="412" r="6" fill="#f39019"/><text x="153" y="416" text-anchor="end" class="plabel" fill="#fff">VCC</text>
+        <circle class="pin" cx="165" cy="440" r="6" fill="#1b1b1b"/><text x="153" y="444" text-anchor="end" class="plabel" fill="#fff">GND</text>
+        <circle class="pin" cx="165" cy="468" r="6" fill="#33a852"/><text x="153" y="472" text-anchor="end" class="plabel" fill="#fff">AO</text>
+      </g>
+
+      <!-- Divisor: R1 y R2 en SERIE, separadas -->
+      <g class="comp" data-name="mq" onclick="pick('mq',event)">
+        <polyline class="rsym" points="418,468 426,459 440,477 454,459 468,477 476,468"/>
+        <text x="447" y="487" text-anchor="middle" class="plabel" font-size="9">R1 10kΩ</text>
+        <circle cx="482" cy="468" r="4.5" fill="#12333a"/>
+        <text x="482" y="440" text-anchor="middle" class="plabel" font-size="9" fill="#5a7a80">punto medio</text>
+        <polyline class="rsym" points="488,468 496,459 510,477 524,459 538,477 546,468"/>
+        <text x="517" y="487" text-anchor="middle" class="plabel" font-size="9">R2 10kΩ</text>
+        <text x="566" y="490" text-anchor="middle" class="plabel" font-size="9">↓ a GND</text>
+      </g>
+    </svg>
+
+    <div class="legend">
+      <div class="it"><span class="sw" style="background:#e23b2e"></span>3.3V (+)</div>
+      <div class="it"><span class="sw" style="background:#f39019"></span>5V</div>
+      <div class="it"><span class="sw" style="background:#1b1b1b"></span>GND (–)</div>
+      <div class="it"><span class="sw" style="background:#2f6fe0"></span>SDA</div>
+      <div class="it"><span class="sw" style="background:#f2c200"></span>SCL</div>
+      <div class="it"><span class="sw" style="background:#33a852"></span>Señal (agua/aire)</div>
+    </div>
+
+    <div class="nota">🧩 El <b>ESP</b> y el <b>ADS</b> van <b>a caballo sobre el canal central</b>: una fila de patitas arriba y la otra abajo. Así cada pata cae en su propia columna y <b>no hacen corto</b>.</div>
+    <div class="nota">⚠️ <b>Une los dos rieles de GND (–).</b> En casi todas las protoboards el riel de <b>arriba</b> y el de <b>abajo</b> <b>no están conectados</b> entre sí. El ESP y el ADS usan el de arriba; el MQ-135 y la R2 usan el de abajo. Pon <b>un cable negro</b> del riel – de arriba al riel – de abajo (en el dibujo, a la derecha). Sin ese cable el MQ-135 no comparte tierra con el ADS y la lectura de A1 sale loca.</div>
+  </div>
+
+  <!-- ====== ZOOM DEL DIVISOR ====== -->
+  <div class="card">
+    <h2>🔍 Zoom: cómo van las 2 RESISTENCIAS (no capacitores) en el protoboard</h2>
+    <svg viewBox="0 0 600 300" role="img" aria-label="Zoom del divisor de voltaje">
+      <rect x="30" y="30" width="540" height="200" rx="12" fill="#f3ead2" stroke="#d9c99a" stroke-width="3"/>
+      <!-- columnas (los 5 hoyos de una columna están conectados entre sí) -->
+      <rect x="146" y="52" width="28" height="150" rx="8" fill="#efe6cb" stroke="#d9c99a"/>
+      <rect x="266" y="52" width="28" height="150" rx="8" fill="#e7d6f2" stroke="#b79ad0" stroke-width="2.5"/>
+      <!-- hoyos -->
+      <g fill="#cbbf95">
+        <circle cx="160" cy="70" r="3"/><circle cx="160" cy="100" r="3"/><circle cx="160" cy="130" r="3"/><circle cx="160" cy="160" r="3"/><circle cx="160" cy="190" r="3"/>
+        <circle cx="280" cy="70" r="3"/><circle cx="280" cy="100" r="3"/><circle cx="280" cy="130" r="3"/><circle cx="280" cy="160" r="3"/><circle cx="280" cy="190" r="3"/>
+      </g>
+      <!-- riel GND -->
+      <line x1="45" y1="245" x2="555" y2="245" stroke="#2f6fe0" stroke-width="4"/>
+      <text x="38" y="250" text-anchor="end" class="plabel" fill="#2f6fe0">–</text>
+      <text x="470" y="240" text-anchor="middle" class="plabel" font-size="11" fill="#2f6fe0">riel de GND (–)</text>
+
+      <!-- R1: de columna A a columna B (fila de arriba) -->
+      <polyline class="rsym" points="160,70 176,58 200,82 224,58 248,82 264,70"/>
+      <text x="212" y="48" text-anchor="middle" class="plabel" font-size="11">R1 10kΩ</text>
+      <!-- R2: de columna B hacia abajo, al riel GND -->
+      <polyline class="rsym" points="280,130 268,146 292,168 268,190 280,206"/>
+      <line x1="280" y1="206" x2="280" y2="245" stroke="#12333a" stroke-width="3"/>
+      <text x="322" y="172" class="plabel" font-size="11">R2 10kΩ</text>
+
+      <!-- jumper del MQ a la columna A -->
+      <line x1="45" y1="160" x2="160" y2="160" stroke="#33a852" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="160" cy="160" r="4" fill="#33a852"/>
+      <text x="95" y="150" text-anchor="middle" class="plabel" font-size="11" fill="#2f7d3a">de MQ (AO)</text>
+      <!-- jumper de la columna B a A1 -->
+      <polyline points="280,160 370,160 370,108" fill="none" stroke="#33a852" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="280" cy="160" r="4" fill="#33a852"/>
+      <text x="392" y="112" class="plabel" font-size="11" fill="#2f7d3a">a A1 del ADS</text>
+
+      <!-- etiquetas de columnas -->
+      <text x="160" y="222" text-anchor="middle" class="plabel" font-size="11">Columna A</text>
+      <text x="280" y="222" text-anchor="middle" class="plabel" font-size="11" fill="#7b3fa0">Columna B</text>
+      <text x="280" y="290" text-anchor="middle" class="plabel" font-size="12" fill="#7b3fa0">(esta es el PUNTO MEDIO)</text>
+    </svg>
+    <div class="nota">💡 Truco del protoboard: <b>los 5 hoyos de una misma columna están conectados entre sí.</b> R1 y R2 comparten la <b>columna B</b> — ahí se tocan y forman el <b>punto medio</b>. De esa columna sale el cable a <b>A1</b>, y R2 la baja a <b>GND</b>. La <b>columna A</b> solo recibe la señal del <b>MQ-135</b>. <b>Son resistencias, no capacitores.</b></div>
+  </div>
+
+  <div class="card">
+    <h2>🧑‍💻 Código para el Arduino IDE (leer A0 = agua, A1 = aire)</h2>
+<pre><span class="c">// Librería: "Adafruit ADS1X15" (instálala desde el gestor de bibliotecas)</span>
+#include &lt;Wire.h&gt;
+#include &lt;Adafruit_ADS1X15.h&gt;
+
+Adafruit_ADS1115 ads;
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin(4, 5);        <span class="c">// SDA = D2 (GPIO4), SCL = D1 (GPIO5)</span>
+  ads.setGain(GAIN_ONE);   <span class="c">// rango cómodo para 0–3.3V</span>
+  ads.begin(0x48);         <span class="c">// ADDR a GND = dirección 0x48</span>
+}
+
+void loop() {
+  int16_t a0 = ads.readADC_SingleEnded(0);   <span class="c">// A0 = TDS (agua)</span>
+  int16_t a1 = ads.readADC_SingleEnded(1);   <span class="c">// A1 = MQ-135 (aire)</span>
+
+  float vAgua = ads.computeVolts(a0);
+  float vAire = ads.computeVolts(a1) * 2.0;  <span class="c">// x2 deshace el divisor 10k+10k</span>
+
+  Serial.printf("Agua A0: %.3f V  |  Aire A1: %.3f V\n", vAgua, vAire);
+  delay(2000);
+}
+</pre>
+  </div>
+</div>
+
+<script>
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const WIRES = [
+    {pts:'328,274 328,165', c:'#e23b2e', comp:'esp'},
+    {pts:'640,274 640,165', c:'#e23b2e', comp:'ads'},
+    {pts:'165,206 250,206 250,165', c:'#e23b2e', comp:'tds'},
+    {pts:'372,274 372,180', c:'#1b1b1b', comp:'esp'},
+    {pts:'672,274 672,180', c:'#1b1b1b', comp:'ads'},
+    {pts:'768,274 768,180', c:'#1b1b1b', comp:'ads'},
+    {pts:'165,234 300,234 300,180', c:'#1b1b1b', comp:'tds'},
+    {pts:'165,440 250,440 250,497', c:'#1b1b1b', comp:'mq'},
+    {pts:'546,468 546,497', c:'#1b1b1b', comp:'mq'},                 // R2 -> riel -
+    {pts:'880,180 880,497', c:'#1b1b1b', comp:'esp ads mq'},         // PUENTE: riel - de arriba <-> riel - de abajo (tierra común)
+    {pts:'416,274 416,196 182,196 182,412 165,412', c:'#f39019', comp:'esp mq'},
+    {pts:'460,274 460,238 704,238 704,274', c:'#2f6fe0', comp:'esp ads'},
+    {pts:'504,274 504,222 736,222 736,274', c:'#f2c200', comp:'esp ads'},
+    {pts:'165,262 205,262 205,420 665,420 665,360', c:'#33a852', comp:'tds ads'}, // TDS -> A0
+    {pts:'165,468 418,468', c:'#33a852', comp:'mq'},                             // MQ AO -> R1
+    {pts:'482,468 482,448 705,448 705,360', c:'#33a852', comp:'mq ads'}          // punto medio -> A1
+  ];
+
+  (function holes(){
+    const g = document.getElementById('holes');
+    const rows = [200,220,240,260,280, 350,370,390,410,430];
+    rows.forEach(y=>{
+      for(let x=224; x<=872; x+=24){
+        const c = document.createElementNS(NS,'circle');
+        c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',2.3);
+        c.setAttribute('fill','#cbbf95'); c.setAttribute('pointer-events','none');
+        g.appendChild(c);
+      }
+    });
+  })();
+
+  (function drawWires(){
+    const g = document.getElementById('wires');
+    WIRES.forEach(w=>{
+      const u = document.createElementNS(NS,'polyline');
+      u.setAttribute('points', w.pts);
+      u.setAttribute('class','wire-under');
+      u.setAttribute('stroke', w.c==='#1b1b1b' ? '#000' : '#0e2b34');
+      u.dataset.comp = w.comp;
+      g.appendChild(u);
+      const l = document.createElementNS(NS,'polyline');
+      l.setAttribute('points', w.pts);
+      l.setAttribute('class','wire');
+      l.setAttribute('stroke', w.c);
+      l.dataset.comp = w.comp;
+      g.appendChild(l);
+    });
+  })();
+
+  const NOMBRE = {esp:'ESP8266', ads:'ADS1115', tds:'sensor de agua (TDS)', mq:'sensor de aire (MQ-135)'};
+
+  function pick(name, ev){
+    if(ev) ev.stopPropagation();
+    document.querySelectorAll('.wire, .wire-under').forEach(w=>{
+      const on = w.dataset.comp.split(' ').includes(name);
+      w.classList.toggle('dim', !on);
+      if(w.classList.contains('wire')) w.classList.toggle('hi', on);
+    });
+    document.querySelectorAll('.comp').forEach(c=>{
+      c.classList.toggle('dim', c.dataset.name !== name);
+    });
+    document.getElementById('hint').textContent = '🔎 Cables del ' + NOMBRE[name] + '. Toca el fondo para ver todo.';
+  }
+
+  function reset(){
+    document.querySelectorAll('.wire, .wire-under, .comp').forEach(e=>e.classList.remove('dim','hi'));
+    document.getElementById('hint').textContent = '👆 Toca un componente para seguir SOLO sus cables. Toca el fondo para ver todo.';
+  }
+</script>
